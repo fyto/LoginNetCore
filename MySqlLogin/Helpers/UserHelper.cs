@@ -10,14 +10,14 @@ namespace MySqlLogin.Helpers
     public class UserHelper : IUserHelper
     {
         private readonly UserManager<Entidad> userManager;
-        //private readonly SignInManager<Entidad> signInManager;
+        private readonly SignInManager<Entidad> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
 
-        public UserHelper(UserManager<Entidad> userManager,/* SignInManager<User> signInManager,*/ RoleManager<IdentityRole> roleManager)
+        public UserHelper(UserManager<Entidad> userManager, SignInManager<Entidad> signInManager, RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
-            //this.signInManager = signInManager;
+            this.signInManager = signInManager;
             this.roleManager = roleManager;
         }
 
@@ -52,5 +52,16 @@ namespace MySqlLogin.Helpers
         {
             return await this.userManager.IsInRoleAsync(entidad, roleName);
         }
+
+        public async Task<SignInResult> LoginAsync(LoginViewModel model)
+        {
+            return await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+        }
+
+        public async Task LogoutAsync()
+        {
+            await this.signInManager.SignOutAsync();
+        }
+
     }
 }

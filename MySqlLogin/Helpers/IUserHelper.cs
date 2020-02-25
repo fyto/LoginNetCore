@@ -18,6 +18,10 @@ namespace MySqlLogin.Helpers
         Task AddUserToRoleAsync(Entidad entidad, string roleName);
 
         Task<bool> IsUserInRoleAsync(Entidad entidad, string roleName);
-       
+
+        Task<SignInResult> LoginAsync(LoginViewModel model);
+
+        Task LogoutAsync();
+
     }
 }
