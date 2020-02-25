@@ -13,6 +13,8 @@ namespace MySqlLogin.Models
 
         public string ClaveEntidad { get; set; }
 
+        public string UserName { get; set; }
+
         public string UsuarioEntidad { get; set; }
 
         public string EntSalt { get; set; }

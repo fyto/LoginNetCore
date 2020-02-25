@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using MySqlLogin.Helpers;
 using MySqlLogin.Models;
 using System;
@@ -58,7 +59,7 @@ namespace MySqlLogin.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                var user = await this.userHelper.GetUserByEmailAsync(model.UsuarioEntidad);
+                var user = await this.userHelper.GetUserByEmailAsync(model.Username);
 
                 //NO EXISTE EL USUARIO EN LA BASE DE DATOS
                 if (user == null)
@@ -69,11 +70,9 @@ namespace MySqlLogin.Controllers
                         user = new Entidad
                         {
                             RutEntidad = model.RutEntidad,
-                            UsuarioEntidad = model.UsuarioEntidad,
+                            UserName = model.Username,
                             EntEmail = model.EntEmail,
                             EntTipo = model.EntTipo,
-
-
 
                             //Nombre = model.FirstName,
                             //Apellido = model.LastName,
@@ -85,12 +84,12 @@ namespace MySqlLogin.Controllers
                             //City = city
                         };
 
-                    //    var result = await this.userHelper.AddUserAsync(user, model.Password);
-                    //    if (result != IdentityResult.Success)
-                    //    {
-                    //        this.ModelState.AddModelError(string.Empty, "The user couldn't be created.");
-                    //        return this.View(model);
-                    //    }
+                        var result = await this.userHelper.AddUserAsync(user, model.ClaveEntidad);
+                        if (result != IdentityResult.Success)
+                        {
+                            this.ModelState.AddModelError(string.Empty, "El usuario no pudo ser creado.");
+                            return this.View(model);
+                        }
 
                         //    var myToken = await this.userHelper.GenerateEmailConfirmationTokenAsync(user);
                         //    var tokenLink = this.Url.Action("ConfirmEmail", "Account", new
@@ -105,7 +104,7 @@ namespace MySqlLogin.Controllers
 
                         //    this.ViewBag.Message = "Las instrucciones para registrar el usuario se enviaron a su correo.";
 
-                        //    return this.View(model);
+                        return this.View(model);
                     }
                     catch (Exception Error)
                     {
