@@ -131,6 +131,12 @@ namespace MySqlLogin.Controllers
             return this.View(model);
         }
 
+        public IActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
         {
