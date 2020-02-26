@@ -6,7 +6,8 @@ namespace MySqlLogin.Data
 {
     public class DataContext : IdentityDbContext<Entidad>
     {
-        public DbSet<Entidad> EntidadesNetCore { get; set; }
+        public DbSet<Ciudad> CIUDAD { get; set; }
+        public DbSet<EntidadArmadillo> ENTIDAD { get; set; }
 
         #region Constructor
         public DataContext(DbContextOptions<DataContext> options) : base(options)

@@ -1,0 +1,57 @@
+﻿@model MySqlLogin.Models.RegisterNewUserViewModel
+
+@{
+    ViewData["Title"] = "Registrar Usuario";
+}
+
+<h2>Registrar nuevo usuario</h2>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <div class="form-group">
+                <label asp-for="RutEntidad">RUT Entidad</label>
+                <input asp-for="RutEntidad" class="form-control" />
+                <span asp-validation-for="RutEntidad" class="text-warning"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Username">Email de Entidad</label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-warning"></span>
+            </div>
+
+            @*<div class="form-group">
+                <label asp-for="EntEmail">Email Entidad</label>
+                <input asp-for="EntEmail" class="form-control" />
+                <span asp-validation-for="EntEmail" class="text-warning"></span>
+            </div>*@
+
+
+            <div class="form-group">
+                <label asp-for="EntTipo">Tipo Entidad</label>
+                <input asp-for="EntTipo" value="2" disabled="disabled" class="form-control" />
+                <span asp-validation-for="EntTipo" class="text-warning"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="ClaveEntidad">Clave Entidad</label>
+                <input asp-for="ClaveEntidad" type="password" class="form-control" />
+                <span asp-validation-for="ClaveEntidad" class="text-warning"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ConfirmacionClaveEntidad">Confirmación Clave Entidad</label>
+                <input asp-for="ConfirmacionClaveEntidad" type="password" class="form-control" />
+                <span asp-validation-for="ConfirmacionClaveEntidad" class="text-warning"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Registrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

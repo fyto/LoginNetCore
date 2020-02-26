@@ -4,15 +4,22 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MySqlLogin.Data;
 using MySqlLogin.Models;
 
 namespace MySqlLogin.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly DataContext dataContext;
+
+        public HomeController(DataContext dataContext)
+        {
+            this.dataContext = dataContext;
+        }
         
         public IActionResult Index()
-        {
+        {       
             return View();
         }
 

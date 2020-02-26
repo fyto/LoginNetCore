@@ -1,20 +1,27 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MySqlLogin.Data;
 using MySqlLogin.Helpers;
 using MySqlLogin.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MySqlLogin.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly DataContext dataContext;
+        
         private readonly IUserHelper userHelper;
-        public AccountController(IUserHelper userHelper)
+
+        public AccountController(IUserHelper userHelper, DataContext dataContext)
         {
-            this.userHelper = userHelper;         
+            this.userHelper = userHelper;
+            this.dataContext = dataContext;
         }
 
         public IActionResult Login()
@@ -65,23 +72,32 @@ namespace MySqlLogin.Controllers
                 if (user == null)
                 {
                     try
-                    {                     
+                    {
+                        //GUARDO EL USUARIO EN LA TABLA ENTIDAD DE ARMADILLO BASE
+                        var entidadArmadillo = new EntidadArmadillo
+                        {
+                           RUT_ENTIDAD = model.RutEntidad,
+                           CLAVE_ENTIDAD = GetSHA1(model.ClaveEntidad),
+                           USUARIO_ENTIDAD = null,
+                           ENT_SALT = "123456",
+                           ENT_ENC = "SHA1",
+                           ENT_ACTIVANDO = false,
+                           ENT_RESTABLECIMIENTO = false,
+                           ENT_EMAIL = model.Username,
+                           ENT_TIPO = 2,
+                           ENT_REFERER = null,
+                        };
 
+                        dataContext.ENTIDAD.Add(entidadArmadillo);
+                        await dataContext.SaveChangesAsync();
+                     
+                        //ARMO OTRO OBJETO DIFERENTE PARA GUARDAR EN LA TABLA ASPNET USERS
                         user = new Entidad
                         {
                             RutEntidad = model.RutEntidad,
                             UserName = model.Username,
-                            EntEmail = model.EntEmail,
                             EntTipo = model.EntTipo,
-
-                            //Nombre = model.FirstName,
-                            //Apellido = model.LastName,
-                            //Email = model.Username,
-                            //UserName = model.Username,
-                            //Address = model.Address,
-                            //PhoneNumber = model.PhoneNumber,
-                            //CityId = model.CityId,
-                            //City = city
+                            Email = model.Username,
                         };
 
                         var result = await this.userHelper.AddUserAsync(user, model.ClaveEntidad);
@@ -91,26 +107,13 @@ namespace MySqlLogin.Controllers
                             return this.View(model);
                         }
 
-                        //    var myToken = await this.userHelper.GenerateEmailConfirmationTokenAsync(user);
-                        //    var tokenLink = this.Url.Action("ConfirmEmail", "Account", new
-                        //    {
-                        //        userid = user.Id,
-                        //        token = myToken
-                        //    }, protocol: HttpContext.Request.Scheme);
-
-
-                        //    this.mailHelper.SendMail(model.Username, "Email de confirmación", $"<h1>Email de confirmación</h1>" +
-                        //       $"Para habilitar el usuario, " + $"haga click en este link: </br></br><a href = \"{tokenLink}\">Confirmar Email</a>");
-
-                        //    this.ViewBag.Message = "Las instrucciones para registrar el usuario se enviaron a su correo.";
+                        this.ModelState.AddModelError(string.Empty, "Usuario creado con exito.");
 
                         return this.View(model);
                     }
                     catch (Exception Error)
                     {
-                        this.ModelState.AddModelError(string.Empty, "No se pudo registrar al usuario, intente más tarde.");
-
-                        //this.ModelState.AddModelError(string.Empty, Error.Message);
+                        this.ModelState.AddModelError(string.Empty, "No se pudo registrar al usuario, intente más tarde.");                       
                     }
 
                 }
@@ -122,6 +125,17 @@ namespace MySqlLogin.Controllers
             return this.View(model);
         }
 
+        public static string GetSHA1(string str)
+        {
+            SHA1 sha1 = SHA1Managed.Create();
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            byte[] stream = null;
+            StringBuilder sb = new StringBuilder();
+            stream = sha1.ComputeHash(encoding.GetBytes(str));
+            for (int i = 0; i < stream.Length; i++) sb.AppendFormat("{0:x2}", stream[i]);
+
+            return sb.ToString();
+        }
 
         public async Task<IActionResult> Logout()
         {
