@@ -138,6 +138,38 @@ namespace MySqlLogin.Controllers
 
 
         [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await this.userHelper.GetUserByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "El email no coincide con el usuario registrado.");
+                    return this.View(model);
+                }
+
+                //var myToken = await this.userHelper.GeneratePasswordResetTokenAsync(user);
+                //var link = this.Url.Action("ResetPassword", "Account", new { token = myToken }, protocol: HttpContext.Request.Scheme);
+                //var mailSender = new MailHelper(configuration);
+                //mailSender.SendMail(model.Email, "Resetear Contraseña", $"<h1>Recuperar Contraseña</h1>" +
+                //    $"Para resetear el password, haga click aquí:</br></br> " +
+                //    $"<a href = \"{link}\">Recuperar Contraseña</a>");
+                //this.ViewBag.Message = "Las instrucciones para recuperar la contraseña fueron enviadas a su correo.";
+                //return this.View();
+
+            }
+
+            return this.View(model);
+        }
+
+        public IActionResult NotAuthorized()
+        {
+            return this.View();
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
         {
             if (ModelState.IsValid)
