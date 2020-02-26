@@ -58,6 +58,11 @@ namespace MySqlLogin.Helpers
             return await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
         }
 
+        public async Task<SignInResult> ValidatePasswordAsync(Entidad entidad, string password)
+        {
+            return await signInManager.CheckPasswordSignInAsync(entidad, password, false);
+        }
+
         public async Task LogoutAsync()
         {
             await this.signInManager.SignOutAsync();

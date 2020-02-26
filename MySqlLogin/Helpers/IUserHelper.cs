@@ -21,6 +21,8 @@ namespace MySqlLogin.Helpers
 
         Task<SignInResult> LoginAsync(LoginViewModel model);
 
+        Task<SignInResult> ValidatePasswordAsync(Entidad entidad, string password);
+
         Task LogoutAsync();
 
     }
